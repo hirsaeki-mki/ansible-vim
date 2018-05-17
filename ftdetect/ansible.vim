@@ -1,7 +1,7 @@
 function! s:isAnsible()
   let filepath = expand("%:p")
   let filename = expand("%:t")
-  if filepath =~ '\v/(tasks|roles|handlers)/.*\.ya?ml$' | return 1 | en
+  if filepath =~ '\v/(tasks|roles|handlers|playbooks)/.*\.ya?ml$' | return 1 | en
   if filepath =~ '\v/(group|host)_vars/' | return 1 | en
   if filename =~ '\v(playbook|site|main|local)\.ya?ml$' | return 1 | en
 
@@ -28,4 +28,4 @@ endfunction
 
 au BufNewFile,BufRead * if s:isAnsible() | set ft=yaml.ansible | en
 au BufNewFile,BufRead *.j2 call s:setupTemplate()
-au BufNewFile,BufRead hosts set ft=ansible_hosts
+au BufNewFile,BufRead hosts,inventory,inventory.yml set ft=ansible_hosts
