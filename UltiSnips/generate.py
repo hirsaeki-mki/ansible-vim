@@ -13,12 +13,13 @@ from ansible.plugins.loader import fragment_loader
 def get_documents():
     for root, dirs, files in os.walk(os.path.dirname(ansible.modules.__file__)):
         for f in files:
-            if f == '__init__.py' or not f.endswith('py') or f.startswith('_'):
+            if f == '__init__.py' or not f.endswith('py'):
                 continue
             documentation = get_docstring(os.path.join(root, f), fragment_loader)[0]
             if documentation is None:
                 continue
             yield documentation
+
 
 def to_snippet(document):
     snippet = []
@@ -44,19 +45,16 @@ def to_snippet(document):
                 if isinstance(value, bool):
                     value = 'yes' if value else 'no'
             else:
-                value = ''
-
+                value = "# " + option.get('description', [''])[0]
             if args.style == 'dictionary':
                 delim = ': '
             else:
                 delim = '='
 
             if name == 'free_form':  # special for command/shell
-                snippet.append('\t\t${%d:%s%s%s}' % (index, name, delim, value))
-            elif isinstance(value, unicode) and len(value) == 0:
-                snippet.append('\t\t%s%s${%d}' % (name, delim, index))
+                snippet.append('\t${%d:%s%s%s}' % (index, name, delim, value))
             else:
-                snippet.append('\t\t%s%s${%d:%s}' % (name, delim, index, value))
+                snippet.append('\t%s%s${%d:%s}' % (name, delim, index, value))
 
         # insert a line to seperate required/non-required fields
         for index, (_, option) in enumerate(options):
@@ -66,12 +64,12 @@ def to_snippet(document):
                 break
 
     if args.style == 'dictionary':
-        snippet.insert(0, '\t%s:' % (document['module']))
+        snippet.insert(0, '%s:' % (document['module']))
     else:
-        snippet.insert(0, '\t%s:%s' % (document['module'], ' >' if len(snippet) else ''))
-    snippet.insert(0, 'abbr %s' % (document['short_description']))
-    snippet.insert(0, 'snippet %s' % (document['module']))
+        snippet.insert(0, '%s:%s' % (document['module'], ' >' if len(snippet) else ''))
+    snippet.insert(0, 'snippet %s "%s" b' % (document['module'], document['short_description']))
     snippet.append('')
+    snippet.append('endsnippet')
     return "\n".join(snippet)
 
 
@@ -99,7 +97,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.output, "w") as f:
-        f.writelines(["# THIS FILE IS AUTOMATED GENERATED, PLEASE DON'T MODIFY BY HAND\n", "\n"])
+        f.writelines(["priority -50\n", "\n", "# THIS FILE IS AUTOMATED GENERATED, PLEASE DON'T MODIFY BY HAND\n", "\n"])
         for document in get_documents():
             if 'deprecated' in document:
                 continue
