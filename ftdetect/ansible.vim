@@ -2,7 +2,7 @@ function! s:isAnsible()
   let filepath = expand("%:p")
   let filename = expand("%:t")
   if filepath =~ '\v/(tasks|roles|handlers|playbooks)/.*\.ya?ml$' | return 1 | en
-  if isdirectory(fnamemodify(filepath, ":h") . "/roles") | if filename =~ '\v.*\.ya?ml$' | return 1 | en
+  if isdirectory(fnamemodify(filepath, ":h") . "/roles") && filename =~ '\v.*\.ya?ml$' | return 1 | en
   if filepath =~ '\v/(group|host)_vars/' | return 1 | en
   if filename =~ '\v(playbook|site|main|local)\.ya?ml$' | return 1 | en
 
