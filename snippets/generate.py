@@ -20,6 +20,7 @@ def get_documents():
                 continue
             yield documentation
 
+
 def to_snippet(document):
     snippet = []
     if 'options' in document:
