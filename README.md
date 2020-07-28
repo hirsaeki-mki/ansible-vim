@@ -39,15 +39,17 @@ Use your favorite plugin manager, or try [vim-plug](https://github.com/junegunn/
 **vim-plug:** `Plug 'pearofducks/ansible-vim'`
 
 **vim-plug with post-update hook:** `Plug 'pearofducks/ansible-vim', { 'do':
-'cd ./UltiSnips; ./generate.py' }`
+'./UltiSnips/generate.sh' }`
 
-*Note: `generate.py` requires Ansible 2.4 or later.*
+*Note: Because of Ansible API changes, `generate.sh` may require the latest (or near-latest) version of Ansible.*
+
+*Note2: `generate.sh` can receive some parameters, for more info see its [Readme](https://github.com/pearofducks/ansible-vim/tree/master/UltiSnips#script-parameters)*
 
 **vundle:** `Plugin 'pearofducks/ansible-vim'`
 
 **pathogen:** `git clone https://github.com/pearofducks/ansible-vim ~/.vim/bundle/ansible-vim`
 
-**Arch Linux:** Package [ansible-vim-git](https://aur.archlinux.org/packages/ansible-vim-git/) available on AUR
+**Arch Linux:** Package [vim-ansible](https://www.archlinux.org/packages/community/any/vim-ansible/) is available in the *community* repository.
 
 ## options
 
@@ -111,7 +113,7 @@ Accepts any syntax group-name from `:help E669` - e.g. _Comment_, _Constant_, an
 
 *Note:* Defaults to 'Statement' when not set.
 
-This option changes the highlight of all `with_.+` keywords in playbooks.
+This option changes the highlight of all `with_.+` keywords and `loop` in playbooks.
 
 ##### g:ansible_template_syntaxes
 `let g:ansible_template_syntaxes = { '*.rb.j2': 'ruby' }`
@@ -121,6 +123,12 @@ Accepts a dictionary in the form of `'regex-for-file': 'filetype'`.
 - _filetype_ is the root filetype to be applied, `jinja2` will be automatically appended
 
 All files ending in `*.j2` that aren't matched will simply get the `jinja2` filetype.
+
+## goto role under cursor (similar to gf)
+
+This behavior is not supported out of the box, but you can use [this snippet](https://gist.github.com/mtyurt/3529a999af675a0aff00eb14ab1fdde3) in your vimrc.
+
+You'll then be able to go to a role's definition with `<leader>gr`.
 
 ## bugs, suggestions/requests, & contributions
 
